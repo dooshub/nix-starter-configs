@@ -77,8 +77,20 @@
   networking.hostName = "nixosvm";
 
   # TODO: This is just an example, be sure to use whatever bootloader you prefer
-  boot.loader.systemd-boot.enable = true;
-
+#  boot.loader.systemd-boot.enable = true;
+  boot = {
+            loader = {
+                        grub.enable = true;
+                        grub.device = "/dev/sda";
+                        grub.useOSProber = true;
+            };
+            kernel = {
+                        sysctl."net.ipv4.ip_forward" = "1";
+                        sysctl."net.ipv6.conf.all.forwarding" = "1";
+                        sysctl = { "vm.swappiness" = 10;}; # OS to RAM %
+            };
+            tmp.cleanOnBoot = true; # clean /tmp at boot
+    };
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
     # FIXME: Replace with your username
